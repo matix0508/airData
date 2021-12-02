@@ -1,8 +1,8 @@
 import json
 from datetime import datetime
-from os import listdir
+from os import listdir, path
 
-from measurement import Day, Hour, Measurement, Index
+from measurement import Day, Hour, Measurement, Index, Days
 
 def extract_index(data: dict) -> Index:
     output = Index()
@@ -39,30 +39,30 @@ def get_data(filename: str) -> dict:
 
 class App:
     def __init__(self) -> None:
-        self.dir = '/home/wleklinski/Documents/Study/Semestr5/Przyrka/Projekt/airData'
-        self.data = []
+        self.dir = '/home/feynman/Documents/University/Przyrka/airData/data'
+        self.data: Days = None
 
     def extract_files_data(self) -> list[Day]:
-        output = []
+        output : list[Day]= []
         for filename in listdir(self.dir):
             if '.json' not in filename:
                 continue
-            raw_data = get_data(filename)
+            raw_data = get_data(path.join(self.dir, filename))
             hist = raw_data['history']
             day = extract_day(hist)
             output.append(day)
         return output
 
     def run(self):
-        self.data = self.extract_files_data()
+        self.data = Days()
+        self.data.days = self.extract_files_data()
 
-    def __repr__(self) -> str:
-        return f"Set of data from {len(self.data)} days"
+    
         
 if __name__ == "__main__":
     app = App()
     app.run()
-    print(app)
+    print(app.data)
     # for item in app.data:
     #     for i in item.history:
     #         print(i.values)
