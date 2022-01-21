@@ -38,6 +38,7 @@ class Info:
         self.temperature: float = None
         self.no2: float = None
         self.o3: float = None
+        self.set_data()
 
     def set_data(self) -> None:
         self.time = self.data.get('TIME')
@@ -118,6 +119,7 @@ class Hour:
         output = {}
         for m in self.values:
             output[m.name] = m.value
+        output['TIME'] = self.starting_hour
         return Info(output)
 
     def make_dict(self) -> dict:
@@ -184,7 +186,10 @@ class Days:
 
     def make_table(self) -> pd.DataFrame:
         output = self.get_infos()
-        return output.get_table()
+        # print(output)
+        tab = output.get_table()
+        # print(tab.head())
+        return tab
         # d = self.make_dict()
         # for _, item in d.items():
         #     print(len(item))
@@ -193,12 +198,14 @@ class Days:
         # return output
 
     def get_csv(self, filename: str) -> None:
-        self.make_table().to_csv(filename)
+        tab = self.make_table()
+        tab.sort_values("TIME")
+        tab.to_csv(filename)
 
     def info(self):
         if self.table is None:
             self.table = self.make_table()
-        print(self.table.info())
+        # print(self.table.info())
 
     def plot(self, x, y):
         plt.scatter(self.table[x], self.table[y])
@@ -219,7 +226,7 @@ class Days:
 
     def make_plot(self, key: str) -> None:
         my_dict = self.make_dict()
-        print(my_dict)
+        # print(my_dict)
         plt.bar(range(len(my_dict[key])), my_dict[key])
         plt.title(key)
         plt.xlabel("Time [days]")
