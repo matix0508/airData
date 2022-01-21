@@ -199,7 +199,7 @@ class Days:
 
     def get_csv(self, filename: str) -> None:
         tab = self.make_table()
-        tab.sort_values("TIME")
+        tab = tab.sort_values("TIME")
         tab.to_csv(filename)
 
     def info(self):
